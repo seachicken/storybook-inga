@@ -1,0 +1,37 @@
+{
+  "name": "storybook-inga",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/register.js",
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seachicken/storybook-inga.git"
+  },
+  "author": "Seito Tanaka",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/seachicken/storybook-inga/issues"
+  },
+  "homepage": "https://github.com/seachicken/storybook-inga#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.17.10",
+    "@babel/preset-react": "^7.16.7",
+    "@storybook/addon-actions": "^6.4.22",
+    "@storybook/addon-essentials": "^6.4.22",
+    "@storybook/addon-interactions": "^6.4.22",
+    "@storybook/addon-links": "^6.4.22",
+    "@storybook/react": "^6.4.22",
+    "@storybook/testing-library": "^0.0.11",
+    "babel-loader": "^8.2.5"
+  },
+  "peerDependencies": {
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  }
+}
