@@ -4,9 +4,10 @@
   "description": "",
   "main": "dist/register.js",
   "scripts": {
-    "build": "babel src --out-dir lib",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "storybook": "npm run build && start-storybook -p 6006 --no-manager-cache",
+    "build-storybook": "build-storybook",
+    "build": "npm run clean && babel src --out-dir dist",
+    "clean": "rm -rf dist"
   },
   "repository": {
     "type": "git",
@@ -31,7 +32,7 @@
     "babel-loader": "^8.2.5"
   },
   "peerDependencies": {
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0"
   }
 }
