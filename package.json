@@ -1,7 +1,7 @@
 {
   "name": "storybook-inga",
   "version": "0.1.0",
-  "description": "",
+  "description": "Storybook addon to visualize results analyzed with inga",
   "main": "dist/register.js",
   "scripts": {
     "storybook": "npm run build && start-storybook -p 6006 --no-manager-cache",
@@ -19,6 +19,11 @@
     "url": "https://github.com/seachicken/storybook-inga/issues"
   },
   "homepage": "https://github.com/seachicken/storybook-inga#readme",
+  "keywords": [
+    "inga",
+    "storybook",
+    "addon"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.17.10",
     "@babel/core": "^7.17.10",
