@@ -1,6 +1,6 @@
 {
   "name": "storybook-inga",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Storybook addon to visualize results analyzed with inga",
   "main": "dist/register.js",
   "scripts": {
