@@ -1,12 +1,13 @@
 import React from 'react';
 import { addons, types } from '@storybook/addons';
-import { useChannel } from '@storybook/api';
-import { STORY_CHANGED, STORY_RENDERED } from '@storybook/core-events';
+import { CURRENT_STORY_WAS_SET, STORY_SPECIFIED, SET_STORIES, STORY_CHANGED, STORY_RENDERED } from '@storybook/core-events';
 import { AddonPanel } from '@storybook/components';
 
 const ADDON_ID = 'seachicken/storybook-inga';
 const PANEL_ID = `${ADDON_ID}/panel`;
 const STYLE_ID = `${ADDON_ID}-highlight`;
+const INGA_PREFIX = '📌 ';
+const INGA_SUFIX = ' (Inga)';
 
 const MyPanel = () => <div>MyAddon</div>;
 
@@ -17,22 +18,81 @@ const highlightStyle = `
 `;
 
 addons.register(ADDON_ID, (api) => {
-  api.on(STORY_RENDERED, storyId => {
-    const preview = document.getElementById('storybook-preview-iframe').contentWindow.document;
-    if (preview) {
-      const ingaElements = preview.querySelectorAll('[data-inga]');
+  let storyInputs = [];
+  let defaultStoryId;
+  let firstIngaStoryId;
+  let waitingStoryId;
+  let renderedStoryId;
+  let completed = false;
 
-      const style = document.createElement('style');
-      style.setAttribute('id', STYLE_ID);
-      style.innerHTML =
-        `[data-inga]{
-          ${highlightStyle}
-        }`;
-      preview.head.appendChild(style);
+  const sleep = millis => new Promise(resolve => setTimeout(resolve, millis));
+
+  api.on(SET_STORIES, payload => {
+    storyInputs = Object
+      .entries(payload.stories)
+      .map(story => story[1]);
+  });
+
+  api.on(CURRENT_STORY_WAS_SET, async ({ storyId }) => {
+    if (defaultStoryId) {
+      return;
+    } else {
+      defaultStoryId = storyId;
+    }
+
+    for (const input of storyInputs) {
+      api.selectStory(input.kind, input.story);
+      waitingStoryId = input.id;
+      let timeoutMillis = 0;
+      const waitMillis = 1;
+      while (waitingStoryId !== renderedStoryId) {
+        if (timeoutMillis > 10000) {
+          return;
+        }
+        await sleep(waitMillis);
+        timeoutMillis += waitMillis;
+      }
+    }
+
+    api.setStories(storyInputs);
+
+    const defaultInput = storyInputs
+      .find(input => input.id === (firstIngaStoryId ? firstIngaStoryId : defaultStoryId));
+    api.selectStory(defaultInput.kind, defaultInput.story);
+
+    completed = true;
+  });
+
+  api.on(STORY_RENDERED, storyId => {
+    renderedStoryId = storyId;
+    const storyInput = storyInputs.find(input => input.id === storyId);
+
+    const preview = document.getElementById('storybook-preview-iframe').contentWindow.document;
+    if (!preview) {
+      return;
+    }
+
+    const style = document.createElement('style');
+    style.setAttribute('id', STYLE_ID);
+    style.innerHTML =
+      `[data-inga]{
+        ${highlightStyle}
+      }`;
+    preview.head.appendChild(style);
+
+    const ingaElements = Array.from(preview.querySelectorAll('[data-inga]'))
+      .filter(e => window.getComputedStyle(e).display !== 'none');
+    if (ingaElements.length >= 1) {
+      if (!firstIngaStoryId) {
+        firstIngaStoryId = storyId;
+      }
+      if (!storyInput.name.startsWith(INGA_PREFIX)) {
+        storyInput.name = `${INGA_PREFIX}${storyInput.name}${INGA_SUFIX}`;
+      }
     }
   });
 
-  api.on(STORY_CHANGED, storyId => {
+  api.on(STORY_CHANGED, () => {
     const preview = document.getElementById('storybook-preview-iframe').contentWindow.document;
     if (preview) {
       const style = preview.getElementById(STYLE_ID);
