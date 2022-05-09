@@ -46,8 +46,9 @@ addons.register(ADDON_ID, (api) => {
       let timeoutMillis = 0;
       const waitMillis = 1;
       while (waitingStoryId !== renderedStoryId) {
-        if (timeoutMillis > 10000) {
-          return;
+        if (timeoutMillis > 1000) {
+          console.warn(`rendering timed out. storyId: ${waitingStoryId}`);
+          break;
         }
         await sleep(waitMillis);
         timeoutMillis += waitMillis;
